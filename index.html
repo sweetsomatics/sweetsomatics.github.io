@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Sweet Somatics</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        paper: '#FBEEE3',
+                        blush: '#EDB9A8',
+                        sage:  '#B9C6B1',
+                        ink:   '#5B2A2E'
+                    },
+                    fontFamily: {
+                        script: ['"Kaushan Script"', 'cursive'],
+                        serif:  ['"Playfair Display"', 'Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- Google Fonts: brush script for the name, Playfair Display for everything else (both appear on her flyer) -->
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Playfair Display', Georgia, serif; }
+        :focus-visible { outline: 3px solid #5B2A2E; outline-offset: 2px; }
+        /* On tablets and computers, body text is fully justified. Phones stay left-aligned, where narrow
+           columns would leave wide gaps. Words are never split with hyphens. */
+        #about p, #about dd, #about li, #retreats p, #thanks p { hyphens: none; -webkit-hyphens: none; }
+        @media (min-width: 640px) {
+            #about p, #about dd, #about li, #retreats p, #thanks p { text-align: justify; text-justify: inter-word; }
+        }
+
+        /* The booking panel grows from nothing to its full height. While closed it is hidden from keyboards and screen readers. */
+        .book-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s ease; }
+        .book-panel > div { overflow: hidden; visibility: hidden; transition: visibility 0s linear .45s; }
+        .book-panel.is-open { grid-template-rows: 1fr; }
+        .book-panel.is-open > div { visibility: visible; transition-delay: 0s; }
+        @media (prefers-reduced-motion: reduce) { .book-panel, .book-panel > div { transition: none; } }
+
+        /* Soft flowers and ripples in the empty space beside the page. Wide screens only, fixed behind the content. */
+        @media (min-width: 1100px) {
+            body {
+                --dahlia: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-210 -210 420 420'%3E%3Cg fill='none' stroke='%23C98672' stroke-width='1.6' stroke-linejoin='round' opacity='0.55'%3E%3Cpath transform='rotate(0.00)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(22.50)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(45.00)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(67.50)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(90.00)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(112.50)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(135.00)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(157.50)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(180.00)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(202.50)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(225.00)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(247.50)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(270.00)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(292.50)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(315.00)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(337.50)' d='M0 0 C 40.0 -60.0 34.0 -160.0 0 -200.0 C -34.0 -160.0 -40.0 -60.0 0 0 Z'/%3E%3Cpath transform='rotate(11.25)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(33.75)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(56.25)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(78.75)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(101.25)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(123.75)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(146.25)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(168.75)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(191.25)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(213.75)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(236.25)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(258.75)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(281.25)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(303.75)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(326.25)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(348.75)' d='M0 0 C 36.0 -50.4 30.6 -134.4 0 -168.0 C -30.6 -134.4 -36.0 -50.4 0 0 Z'/%3E%3Cpath transform='rotate(3.00)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(28.71)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(54.43)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(80.14)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(105.86)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(131.57)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(157.29)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(183.00)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(208.71)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(234.43)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(260.14)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(285.86)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(311.57)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(337.29)' d='M0 0 C 32.0 -40.8 27.2 -108.8 0 -136.0 C -27.2 -108.8 -32.0 -40.8 0 0 Z'/%3E%3Cpath transform='rotate(15.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(45.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(75.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(105.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(135.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(165.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(195.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(225.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(255.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(285.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(315.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(345.00)' d='M0 0 C 28.0 -32.4 23.8 -86.4 0 -108.0 C -23.8 -86.4 -28.0 -32.4 0 0 Z'/%3E%3Cpath transform='rotate(0.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(36.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(72.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(108.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(144.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(180.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(216.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(252.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(288.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(324.00)' d='M0 0 C 24.0 -24.6 20.4 -65.6 0 -82.0 C -20.4 -65.6 -24.0 -24.6 0 0 Z'/%3E%3Cpath transform='rotate(22.50)' d='M0 0 C 19.0 -17.4 16.1 -46.4 0 -58.0 C -16.1 -46.4 -19.0 -17.4 0 0 Z'/%3E%3Cpath transform='rotate(67.50)' d='M0 0 C 19.0 -17.4 16.1 -46.4 0 -58.0 C -16.1 -46.4 -19.0 -17.4 0 0 Z'/%3E%3Cpath transform='rotate(112.50)' d='M0 0 C 19.0 -17.4 16.1 -46.4 0 -58.0 C -16.1 -46.4 -19.0 -17.4 0 0 Z'/%3E%3Cpath transform='rotate(157.50)' d='M0 0 C 19.0 -17.4 16.1 -46.4 0 -58.0 C -16.1 -46.4 -19.0 -17.4 0 0 Z'/%3E%3Cpath transform='rotate(202.50)' d='M0 0 C 19.0 -17.4 16.1 -46.4 0 -58.0 C -16.1 -46.4 -19.0 -17.4 0 0 Z'/%3E%3Cpath transform='rotate(247.50)' d='M0 0 C 19.0 -17.4 16.1 -46.4 0 -58.0 C -16.1 -46.4 -19.0 -17.4 0 0 Z'/%3E%3Cpath transform='rotate(292.50)' d='M0 0 C 19.0 -17.4 16.1 -46.4 0 -58.0 C -16.1 -46.4 -19.0 -17.4 0 0 Z'/%3E%3Cpath transform='rotate(337.50)' d='M0 0 C 19.0 -17.4 16.1 -46.4 0 -58.0 C -16.1 -46.4 -19.0 -17.4 0 0 Z'/%3E%3Cpath transform='rotate(0.00)' d='M0 0 C 14.0 -10.8 11.9 -28.8 0 -36.0 C -11.9 -28.8 -14.0 -10.8 0 0 Z'/%3E%3Cpath transform='rotate(60.00)' d='M0 0 C 14.0 -10.8 11.9 -28.8 0 -36.0 C -11.9 -28.8 -14.0 -10.8 0 0 Z'/%3E%3Cpath transform='rotate(120.00)' d='M0 0 C 14.0 -10.8 11.9 -28.8 0 -36.0 C -11.9 -28.8 -14.0 -10.8 0 0 Z'/%3E%3Cpath transform='rotate(180.00)' d='M0 0 C 14.0 -10.8 11.9 -28.8 0 -36.0 C -11.9 -28.8 -14.0 -10.8 0 0 Z'/%3E%3Cpath transform='rotate(240.00)' d='M0 0 C 14.0 -10.8 11.9 -28.8 0 -36.0 C -11.9 -28.8 -14.0 -10.8 0 0 Z'/%3E%3Cpath transform='rotate(300.00)' d='M0 0 C 14.0 -10.8 11.9 -28.8 0 -36.0 C -11.9 -28.8 -14.0 -10.8 0 0 Z'/%3E%3Cpath transform='rotate(18.00)' d='M0 0 C 8.0 -5.4 6.8 -14.4 0 -18.0 C -6.8 -14.4 -8.0 -5.4 0 0 Z'/%3E%3Cpath transform='rotate(90.00)' d='M0 0 C 8.0 -5.4 6.8 -14.4 0 -18.0 C -6.8 -14.4 -8.0 -5.4 0 0 Z'/%3E%3Cpath transform='rotate(162.00)' d='M0 0 C 8.0 -5.4 6.8 -14.4 0 -18.0 C -6.8 -14.4 -8.0 -5.4 0 0 Z'/%3E%3Cpath transform='rotate(234.00)' d='M0 0 C 8.0 -5.4 6.8 -14.4 0 -18.0 C -6.8 -14.4 -8.0 -5.4 0 0 Z'/%3E%3Cpath transform='rotate(306.00)' d='M0 0 C 8.0 -5.4 6.8 -14.4 0 -18.0 C -6.8 -14.4 -8.0 -5.4 0 0 Z'/%3E%3C/g%3E%3C/svg%3E");
+                --ripples: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-240 -240 480 480'%3E%3Cg fill='none' stroke='%238CA085' stroke-width='1.6' opacity='0.6'%3E%3Ccircle r='18'/%3E%3Ccircle r='42'/%3E%3Ccircle r='70'/%3E%3Ccircle r='102'/%3E%3Ccircle r='138'/%3E%3Ccircle r='178'/%3E%3Ccircle r='222'/%3E%3C/g%3E%3C/svg%3E");
+                --d: clamp(380px, 26vw, 600px);
+                background-image: var(--dahlia), var(--ripples), var(--dahlia), var(--ripples);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: var(--d) var(--d), calc(var(--d) * 1.1) calc(var(--d) * 1.1), calc(var(--d) * 0.8) calc(var(--d) * 0.8), calc(var(--d) * 0.7) calc(var(--d) * 0.7);
+                background-position:
+                    left calc(var(--d) * -0.45) top 6vh,
+                    right calc(var(--d) * -0.5) top 3vh,
+                    right calc(var(--d) * -0.3) bottom 6vh,
+                    left calc(var(--d) * -0.3) bottom 10vh;
+            }
+        }
+    </style>
+</head>
+<body class="bg-paper text-ink font-serif text-[17px] leading-relaxed antialiased">
+
+    <!-- Watercolor edge effect, used by the two bands in the header -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+        <defs>
+            <filter id="wc" x="-8%" y="-12%" width="116%" height="124%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.018 0.03" numOctaves="3" seed="7" result="noise"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <linearGradient id="gBlush" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#F1C4B4"/>
+                <stop offset="1" stop-color="#E7A996"/>
+            </linearGradient>
+            <linearGradient id="gSage" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#C4CFBD"/>
+                <stop offset="1" stop-color="#AEBFA7"/>
+            </linearGradient>
+
+            <!-- Service icons: simple line drawings in the ink color, used with <use href="#ic-...">. -->
+            <symbol id="ic-massage" viewBox="0 0 64 64">
+                <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="32" cy="53" rx="21" ry="7"/>
+                    <ellipse cx="32" cy="41" rx="14" ry="6"/>
+                    <ellipse cx="32" cy="29.5" rx="9" ry="5"/>
+                    <path d="M32 24.5 C29 15 35 9 45 9 C46 18 40 24 32 24.5 Z"/>
+                    <path d="M33 22 L42 13"/>
+                </g>
+            </symbol>
+            <symbol id="ic-reiki" viewBox="0 0 64 64">
+                <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="32" cy="26" r="7"/>
+                    <path d="M45 26 H50 M41.2 16.8 L44.7 13.3 M32 13 V8 M22.8 16.8 L19.3 13.3 M19 26 H14 M22.8 35.2 L19.3 38.7 M41.2 35.2 L44.7 38.7 M32 39 V43"/>
+                    <path d="M9 42 C13 54 23 58 32 58 C41 58 51 54 55 42"/>
+                </g>
+            </symbol>
+            <symbol id="ic-sound" viewBox="0 0 64 64">
+                <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="30" cy="37" rx="21" ry="5.5"/>
+                    <path d="M9 37 C9 51 18 57 30 57 C42 57 51 51 51 37"/>
+                    <path d="M22 61 H38"/>
+                    <path d="M58 9 L46 32"/>
+                    <circle cx="59.5" cy="6.5" r="3.2"/>
+                    <path d="M12 24 Q18 18 24 24"/>
+                    <path d="M7 19 Q18 8 29 19"/>
+                </g>
+            </symbol>
+            <symbol id="ic-yoga" viewBox="0 0 64 64">
+                <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M32 8 C25 18 25 32 32 43 C39 32 39 18 32 8 Z"/>
+                    <path d="M28 42 C17 41 9 34 7 22 C18 22 25 28 28 42 Z"/>
+                    <path d="M36 42 C47 41 55 34 57 22 C46 22 39 28 36 42 Z"/>
+                    <path d="M12 52 Q32 61 52 52"/>
+                </g>
+            </symbol>
+        </defs>
+    </svg>
+
+    <!-- HEADER -->
+    <header class="max-w-xl lg:max-w-5xl mx-auto px-4 pt-6">
+        <div class="relative px-6 pt-12 pb-14 text-center">
+            <svg class="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
+                <rect x="8" y="10" width="384" height="180" fill="url(#gBlush)" filter="url(#wc)"/>
+            </svg>
+            <h1 class="relative font-script text-5xl sm:text-6xl leading-tight">Sweet Somatics</h1>
+        </div>
+        <div class="relative -mt-6 px-6 pt-12 pb-12 text-center">
+            <svg class="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 400 240" preserveAspectRatio="none" aria-hidden="true">
+                <rect x="8" y="10" width="384" height="220" fill="url(#gSage)" filter="url(#wc)"/>
+            </svg>
+            <ul class="relative inline-block lg:grid lg:grid-cols-2 lg:gap-x-14 lg:gap-y-6 lg:items-start text-left text-2xl sm:text-3xl space-y-5 lg:space-y-0">
+                <li class="lg:row-span-3 flex items-start gap-4"><svg class="w-11 h-11 shrink-0" aria-hidden="true" focusable="false"><use href="#ic-massage"/></svg><span><a href="#book" data-service="massage" aria-label="Massage Therapy: open the booking calendar" class="relative -my-2 py-2 underline decoration-ink/25 underline-offset-4 hover:decoration-ink">Massage Therapy</a><span class="mt-1 block max-w-[19rem] lg:max-w-sm text-base leading-snug text-ink/80">Bodywork shaped around you.</span><ul class="mt-2 max-w-[19rem] lg:max-w-sm space-y-1.5 text-base leading-snug text-ink/80" aria-label="Massage styles"><li><span class="font-semibold text-ink">Deep Tissue:</span> firm pressure for the deeper layers of muscle. My specialty.</li><li><span class="font-semibold text-ink">Sports:</span> for active people: eases tension and supports recovery.</li><li><span class="font-semibold text-ink">Swedish Relaxation:</span> long, flowing strokes to calm the nervous system.</li><li><span class="font-semibold text-ink">Womb Hara:</span> gentle, focused attention on the womb and hara, for women.</li></ul></span></li>
+                <li class="flex items-start gap-4"><svg class="w-11 h-11 shrink-0" aria-hidden="true" focusable="false"><use href="#ic-reiki"/></svg><span><a href="#book" data-service="reiki" aria-label="Reiki Healing: open the booking calendar" class="relative -my-2 py-2 underline decoration-ink/25 underline-offset-4 hover:decoration-ink">Reiki Healing</a><span class="mt-1 block max-w-[19rem] lg:max-w-sm text-base leading-snug text-ink/80">Usui Holy Fire Reiki sessions, plus classes from Level 1 through Master and Karuna Reiki.</span></span></li>
+                <li class="flex items-start gap-4"><svg class="w-11 h-11 shrink-0" aria-hidden="true" focusable="false"><use href="#ic-sound"/></svg><span><a href="#book" data-service="sound" aria-label="Sound Healing: open the booking calendar" class="relative -my-2 py-2 underline decoration-ink/25 underline-offset-4 hover:decoration-ink">Sound Healing</a><span class="mt-1 block max-w-[19rem] lg:max-w-sm text-base leading-snug text-ink/80">Crystal singing bowls and tuning forks, for individuals or groups.</span></span></li>
+                <li class="flex items-start gap-4"><svg class="w-11 h-11 shrink-0" aria-hidden="true" focusable="false"><use href="#ic-yoga"/></svg><span><a href="#book" data-service="yoga" aria-label="Yoga: open the booking calendar" class="relative -my-2 py-2 underline decoration-ink/25 underline-offset-4 hover:decoration-ink">Yoga</a></span></li>
+            </ul>
+        </div>
+
+        <div id="whereRow" class="mt-7 mx-auto max-w-xs sm:max-w-none grid grid-cols-2 gap-y-3 sm:flex sm:flex-wrap items-start justify-center sm:gap-x-9 text-center"></div>
+        <div class="mt-5 flex flex-col sm:flex-row gap-3 lg:max-w-xl lg:mx-auto">
+            <button id="bookToggle" type="button" aria-expanded="false" aria-controls="book" class="scroll-mt-4 min-h-[52px] flex-1 inline-flex items-center justify-center rounded-full border-2 border-ink bg-ink text-paper text-lg font-semibold px-6 aria-expanded:bg-transparent aria-expanded:text-ink">Book a session</button>
+            <a href="#retreats" class="min-h-[52px] flex-1 inline-flex items-center justify-center rounded-full border-2 border-ink text-lg font-semibold px-6">See summer retreats</a>
+        </div>
+
+        <!-- BOOKING: opens in place under the button. The Cal.com calendar loads the first time it opens. -->
+        <div id="book" class="book-panel">
+            <div>
+                <div class="pt-8">
+                    <div id="bookFlow">
+                    <div id="bookPicker" class="mt-5">
+                        <p id="svcLabel" class="text-ink/80">What would you like to book?</p>
+                        <div id="svcButtons" role="group" aria-labelledby="svcLabel" class="mt-2 flex flex-wrap gap-3"></div>
+                        <p id="placeLabel" class="mt-5 text-ink/80">Where would you like to book?</p>
+                        <div id="placeButtons" role="group" aria-labelledby="placeLabel" class="mt-2 flex flex-wrap gap-3"></div>
+                    </div>
+                    <p class="mt-5 text-ink/80">Like to pay ahead? <a data-pay-link href="#" target="_blank" rel="noopener" class="underline underline-offset-4 inline-flex items-center min-h-[44px]">Pay here with Venmo<span class="sr-only"> (opens in a new tab)</span></a>. You can also pay when we meet.</p>
+                    <div id="calEmbeds" class="mt-6 rounded-2xl overflow-hidden"></div>
+                    <p class="mt-3 text-sm text-ink/80">Calendar not showing? <a data-booking-link href="#" target="_blank" rel="noopener" class="underline underline-offset-4 inline-flex items-center min-h-[44px]">Open it in a new tab</a>.</p>
+                    </div>
+                    <div id="thanks" class="hidden focus:outline-none" tabindex="-1" role="status">
+                        <h2 class="text-3xl font-semibold">Thank you!</h2>
+                        <p id="thanksLine" class="mt-2 text-xl"></p>
+                        <p class="mt-3 text-ink/80">A confirmation and calendar invite are on their way to your email. If you do not see them in a few minutes, check your spam folder.</p>
+                        <p class="mt-6 text-lg">Like to pay ahead? It is optional, and Venmo is the easiest way.</p>
+                        <p class="mt-3"><a data-pay href="#" target="_blank" rel="noopener" class="min-h-[48px] inline-flex items-center gap-2 rounded-full bg-ink text-paper text-base font-semibold px-6"><i class="fa-solid fa-wallet" aria-hidden="true"></i>Pay here with Venmo<span class="sr-only"> (opens in a new tab)</span></a></p>
+                        <p class="mt-8 text-ink/80">Know someone who would enjoy this? Pass it on.</p>
+                        <div id="thanksShare" class="mt-3 flex flex-wrap gap-3"></div>
+                        <p id="thanksNote" role="status" class="empty:hidden mt-3 text-sm text-ink/80"></p>
+                        <button id="bookAnother" type="button" class="mt-6 min-h-[48px] inline-flex items-center rounded-full border-2 border-ink text-base font-semibold px-5">Book another session</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- ABOUT -->
+        <section id="about" class="lg:grid lg:grid-cols-[18rem_1fr] lg:gap-x-14 max-w-xl lg:max-w-5xl mx-auto px-4 mt-16 scroll-mt-4">
+            <div class="lg:sticky lg:top-8 lg:self-start"><img src="images/jessica-portrait.jpg" width="800" height="1000" alt="Portrait of Jessica, smiling, outdoors in the late afternoon light" loading="lazy"
+                 class="mx-auto lg:mx-0 block w-64 sm:w-72 h-auto aspect-[4/5] object-cover rounded-t-full rounded-b-3xl"></div>
+            <div class="lg:max-w-2xl">
+            <h2 class="mt-8 text-3xl font-semibold">About Jessica</h2>
+            <p class="mt-3 text-xl">I have been practicing bodywork for almost twenty years, trained and certified in multiple modalities.</p>
+            <p class="mt-4 text-ink/80">Bodywork is never one-size-fits-all. Each session is crafted around you: your history, your unfolding and your specific needs. I serve not only the physical body, but the mind and the emotional landscape too.</p>
+            <p class="mt-4 text-ink/80">I attend to the stomach and core, the emotional processing center of the whole system and an area often overlooked in traditional bodywork. For women, I can give deep attention to the womb and hara. Much of my work takes place directly on the ground, supported by the living presence of Earth herself.</p>
+            <p class="mt-4 text-ink/80">Alongside hands-on bodywork, I weave in sound healing, tuning forks and other subtle practices that deepen regulation and release. I also offer one-on-one sessions out in nature, and group immersions, where people heal in community.</p>
+            <blockquote class="mt-6 border-l-2 border-blush pl-4 text-xl italic">To tend the physical vessel so that others may step into their truest sovereignty.</blockquote>
+            <p class="mt-6 text-ink/80">Curious whether we are a good fit? I offer a free 20-minute consultation call.</p>
+            <button id="consultToggle" type="button" aria-expanded="false" aria-controls="consultPanel" class="mt-3 min-h-[48px] inline-flex items-center rounded-full border-2 border-ink bg-ink text-paper text-base font-semibold px-6 aria-expanded:bg-transparent aria-expanded:text-ink">Book a free consultation</button>
+            <div id="consultPanel" hidden class="mt-4">
+                <div id="consultEmbed" class="rounded-2xl overflow-hidden mix-blend-multiply min-h-[560px]"></div>
+                <p class="mt-3 text-sm text-ink/80">Calendar not showing? <a id="consultLink" href="#" target="_blank" rel="noopener" class="underline underline-offset-4 inline-flex items-center min-h-[44px]">Open it in a new tab</a>.</p>
+            </div>
+
+
+            <h3 class="mt-8 text-xl font-semibold">Training</h3>
+            <ul class="mt-2 space-y-1 text-ink/80">
+                <li>Florida College of Natural Health, over 700 hours of massage therapy training</li>
+                <li>Nationally Certified in Therapeutic Massage and Bodywork (NCTMB), 2007</li>
+                <li>Certified by the California Massage Therapy Council, <a href="https://www.camtc.org/record-search?certificateNumber=74029&amp;work=&amp;lastName=&amp;firstName=" target="_blank" rel="noopener" class="underline underline-offset-4">certificate number 74029<span class="sr-only"> (opens her CAMTC record in a new tab)</span></a></li>
+                <li>Further training in Thai Yoga massage adapted for the table, myofascial release and reflexology</li>
+            </ul>
+            </div>
+        </section>
+
+        <div class="max-w-xl lg:max-w-5xl mx-auto px-4 mt-16" aria-hidden="true">
+            <svg class="w-full h-5 text-ink/35" viewBox="0 0 400 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path vector-effect="non-scaling-stroke" d="M0 10 Q25 -2 50 10 T100 10 T150 10 T200 10 T250 10 T300 10 T350 10 T400 10"/>
+            </svg>
+        </div>
+        <!-- RETREATS -->
+        <section id="retreats" class="lg:grid lg:grid-cols-[18rem_1fr] lg:gap-x-14 max-w-xl lg:max-w-5xl mx-auto px-4 mt-8 scroll-mt-4">
+            <img src="images/jessica-sunset.jpg" width="1000" height="1499" alt="Jessica with her eyes closed and one arm raised, holding dried wildflowers in golden sunset light" loading="lazy" class="mb-6 lg:mb-0 block w-full max-w-md mx-auto lg:max-w-none h-auto rounded-2xl">
+            <div class="lg:max-w-2xl">
+            <h2 class="text-3xl font-semibold">Summer Retreats</h2>
+            <p class="mt-2 text-ink/80">Small gatherings in Trinity County, Humboldt County, and Mt. Shasta.</p>
+            <ul id="eventList" class="mt-6 border-t border-ink/20"></ul>
+            <p id="eventEmpty" class="hidden mt-6 text-ink/80"></p>
+            <details id="pastWrap" class="hidden mt-8">
+                <summary class="min-h-[44px] inline-flex items-center cursor-pointer underline underline-offset-4 decoration-ink/30">Past retreats</summary>
+                <ul id="pastList" class="mt-2 text-ink/80"></ul>
+            </details>
+            </div>
+        </section>
+
+        <!-- NEWSLETTER -->
+        <div class="max-w-xl lg:max-w-5xl mx-auto px-4 mt-16" aria-hidden="true">
+            <svg class="w-full h-5 text-ink/35" viewBox="0 0 400 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path vector-effect="non-scaling-stroke" d="M0 10 Q25 -2 50 10 T100 10 T150 10 T200 10 T250 10 T300 10 T350 10 T400 10"/>
+            </svg>
+        </div>
+        <section id="news" class="max-w-xl lg:max-w-5xl mx-auto px-4 mt-8 scroll-mt-4">
+            <h2 class="text-3xl font-semibold">Stay in the loop</h2>
+            <p class="mt-2 text-ink/80">Get new retreat dates and openings by email.</p>
+            <form id="newsForm" class="mt-5 lg:max-w-xl" method="post">
+                <label for="email" class="block font-semibold mb-2">Email address</label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"
+                           class="min-h-[52px] flex-1 rounded-full border-2 border-ink/40 bg-white/60 px-5 text-ink placeholder-ink/50 focus:border-ink">
+                    <button type="submit" class="min-h-[52px] rounded-full bg-ink text-paper text-lg font-semibold px-6">Join the list</button>
+                </div>
+                <p id="newsNotice" role="status" class="empty:hidden mt-3 text-sm bg-sage/50 rounded-lg px-3 py-2"></p>
+            </form>
+        </section>
+    </main>
+
+    <dialog id="lightbox" class="m-auto max-w-[95vw] max-h-[95vh] bg-transparent p-0 backdrop:bg-black/80">
+        <button type="button" id="lightboxClose" class="absolute right-2 top-2 min-h-[44px] min-w-[44px] rounded-full bg-paper text-ink text-xl font-semibold" aria-label="Close photo">&times;</button>
+        <img id="lightboxImg" alt="" class="block max-w-[95vw] max-h-[95vh] rounded-lg">
+    </dialog>
+
+    <footer class="max-w-xl lg:max-w-5xl mx-auto px-4 mt-20 pb-12">
+        <div class="border-t border-ink/20 pt-8 lg:grid lg:grid-cols-3 lg:gap-x-12">
+            <div>
+            <p class="font-script text-3xl">Sweet Somatics</p>
+            <p id="footWhere" class="mt-1 text-ink/80"></p>
+            </div>
+            <div>
+            <p class="mt-4 lg:mt-0">
+                <a href="mailto:sweetsomatics@gmail.com" class="min-h-[44px] inline-flex items-center underline underline-offset-4">sweetsomatics@gmail.com</a><br>
+                <a href="tel:+15307392395" class="min-h-[44px] inline-flex items-center underline underline-offset-4">(530) 739-2395</a>
+            </p>
+            <p class="mt-4"><a data-pay href="#" target="_blank" rel="noopener" class="min-h-[48px] inline-flex items-center gap-2 rounded-full bg-ink text-paper text-base font-semibold px-6"><i class="fa-solid fa-wallet" aria-hidden="true"></i>Pay here with Venmo<span class="sr-only"> (opens in a new tab)</span></a></p>
+            <p class="mt-1 text-sm text-ink/80">For sessions and retreats. Pay ahead or when we meet.</p>
+            </div>
+            <div>
+            <div id="followRow" class="hidden mt-6">
+                <p class="text-ink/80">Follow along</p>
+                <div id="followLinks" class="mt-2 flex flex-wrap gap-3"></div>
+            </div>
+            <div class="mt-6 lg:mt-0">
+                <p class="text-ink/80">Share this page</p>
+                <div id="footShare" class="mt-2 flex flex-wrap gap-3"></div>
+                <p id="footShareNote" role="status" class="empty:hidden mt-3 text-sm text-ink/80"></p>
+            </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* ==========================================================
+           EDIT HERE. Everything the page shows comes from these.
+           ========================================================== */
+
+        const SITE = {
+            // Her Cal.com username, from cal.com/username/...
+            calUser: 'sweetsomatics',
+            // Each booking link is named place-service, for example cal.com/syd-ballam-qcjhpv/hayfork-massage.
+            // So every place needs one link per service. "slug" is the part used in that link name.
+            // Optionally add days: 'Mon · Wed · Fri' to a place to show the days she is there.
+            locations: [
+                { name: 'Hayfork', slug: 'hayfork' },
+                { name: 'Weaverville', slug: 'weaverville' }
+            ],
+            email: 'sweetsomatics@gmail.com',
+            // Places that are not booked through Cal.com. Eureka opens its own booking page in a new tab; Redding sends her an email.
+            otherPlaces: [
+                { name: 'Eureka', url: 'https://hmm.janeapp.com/locations/humboldt-mobile-massage/book#/staff_member/47/treatment/95' },
+                { name: 'Redding', email: true }
+            ],
+            services: [
+                { key: 'massage', name: 'Massage Therapy', slug: 'massage' },
+                { key: 'reiki',   name: 'Reiki Healing',   slug: 'reiki' },
+                { key: 'sound',   name: 'Sound Healing',   slug: 'sound-healing' },
+                { key: 'yoga',    name: 'Yoga',            slug: 'yoga' }
+            ],
+            // Colors inside the booking box, as they should look on the page. Names are Cal.com's own (all but "spacing", which is left at its default).
+            calColors: {
+                "cal-brand": "#5B2A2E", "cal-brand-emphasis": "#451E22", "cal-brand-text": "#FBEEE3",
+                "cal-brand-subtle": "#EDB9A8", "cal-brand-accent": "#FBEEE3",
+                "cal-text": "#5B2A2E", "cal-text-emphasis": "#5B2A2E", "cal-text-subtle": "#7A4A4E",
+                "cal-text-muted": "#B08F8F", "cal-text-inverted": "#FBEEE3",
+                "cal-text-semantic-info": "#3F5A6B", "cal-text-semantic-attention": "#8A5A12", "cal-text-semantic-error": "#9B2C2C",
+                "cal-text-info": "#3F5A6B", "cal-text-success": "#3F6B4A", "cal-text-attention": "#8A5A12", "cal-text-error": "#9B2C2C",
+                "cal-bg": "#FBEEE3", "cal-bg-emphasis": "#F1D3C6", "cal-bg-subtle": "#F6E0D3", "cal-bg-muted": "#F6E0D3",
+                "cal-bg-inverted": "#5B2A2E", "cal-bg-attention": "#F6E3B8", "cal-bg-error": "#F3C9C4",
+                "cal-bg-semantic-info-subtle": "#DDE5D8", "cal-bg-semantic-attention-subtle": "#F6E3B8", "cal-bg-semantic-error-subtle": "#F3C9C4",
+                "cal-border": "#E2C9BD", "cal-border-emphasis": "#5B2A2E", "cal-border-subtle": "#E9D5CA", "cal-border-muted": "#EFDFD5",
+                "cal-border-error": "#9B2C2C", "cal-border-semantic-error": "#9B2C2C",
+                "cal-border-semantic-attention-subtle": "#E2C98F", "cal-border-semantic-error-subtle": "#E8B4AD",
+                "cal-border-booker": "#FBEEE3", "cal-border-booker-width": "0px",
+                "radius": "1rem"
+            },
+            // Her social accounts: paste the full address of each profile. Empty ones are not shown.
+            social: { facebook: '', x: '', instagram: '' },
+            // Her Venmo username, without the @. While empty, the page says Venmo is accepted but shows no link.
+            venmo: 'Jessica_LynnP',
+            // While this is empty, the newsletter form shows a mockup notice instead.
+            newsletterAction: ''
+        };
+
+        // Retreats are not typed in here. They come from jessica-retreats.json, which a
+        // scheduled job refreshes from her Cal.com account (see scripts/update-retreats.mjs).
+        const RETREATS_FILE = 'jessica-retreats.json';
+        const TZ = 'America/Los_Angeles';
+
+        /* ---------------- code below needs no editing ---------------- */
+
+        const fmt = o => new Intl.DateTimeFormat('en-US', Object.assign({ timeZone: TZ }, o));
+        const fmtMD = fmt({ month: 'long', day: 'numeric' }), fmtMDY = fmt({ month: 'long', day: 'numeric', year: 'numeric' });
+        const fmtTime = fmt({ hour: 'numeric', minute: '2-digit' }), fmtMonthYear = fmt({ month: 'long', year: 'numeric' });
+        const dayKey = d => fmt({ year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+
+        function esc(s) {
+            return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        function rangeText(e) {
+            const s = new Date(e.start), t = new Date(e.end);
+            if (dayKey(s) === dayKey(t)) return fmtMDY.format(s);
+            const sm = fmt({ month: 'numeric', year: 'numeric' }).format(s), tm = fmt({ month: 'numeric', year: 'numeric' }).format(t);
+            const endTxt = sm === tm ? fmt({ day: 'numeric' }).format(t) : fmtMD.format(t);
+            return fmtMD.format(s) + ' to ' + endTxt + ', ' + fmt({ year: 'numeric' }).format(t);
+        }
+        function timeText(e) {
+            const s = new Date(e.start), t = new Date(e.end);
+            return dayKey(s) === dayKey(t) ? fmtTime.format(s) + ' to ' + fmtTime.format(t) : '';
+        }
+
+        /* ---- booking: Cal.com inline embed ---- */
+        const PLACES = SITE.locations, SERVICES = SITE.services;
+        let svcIdx = -1, placeIdx = PLACES.length === 1 ? 0 : -1;
+        const bookingLinks = document.querySelectorAll('[data-booking-link]');
+        // The Cal.com link name for each place and service (the part after her username).
+        const LINKS = {
+            hayfork:     { massage: 'hayfork-massage-therapy',     reiki: 'hayfork-reiki-healing',     sound: 'hayfork-sound-healing',     yoga: 'hayfork-yoga' },
+            weaverville: { massage: 'weaverville-massage-therapy', reiki: 'weaverville-reiki-healing', sound: 'weaverville-sound-healing', yoga: 'weaverville-yoga' }
+        };
+        const linkFor = (si, pi) => SITE.calUser + '/' + LINKS[PLACES[pi].slug][SERVICES[si].key];
+        function setFallbackLink() {
+            const l = svcIdx >= 0 && placeIdx >= 0 ? linkFor(svcIdx, placeIdx) : SITE.calUser;
+            bookingLinks.forEach(a => { a.href = 'https://cal.com/' + l; });
+        }
+        setFallbackLink();
+
+        (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+
+        // Cal.com paints some boxes plain white that its color settings cannot reach. Blending the calendar
+        // into the page ("multiply") turns every white area into the page's cream. Cal's colors are
+        // pre-adjusted below so everything else still comes out as listed in SITE.calColors.
+        const PAGE_RGB = [251, 238, 227];
+        function onPage(hex) {
+            const m = /^#([0-9a-f]{6})$/i.exec(hex);
+            if (!m) return hex;
+            const v = [0, 2, 4].map((i, k) => Math.min(255, Math.round(parseInt(m[1].substr(i, 2), 16) * 255 / PAGE_RGB[k])));
+            return '#' + v.map(n => n.toString(16).padStart(2, '0')).join('');
+        }
+        const calVars = {};
+        Object.keys(SITE.calColors).forEach(k => { calVars[k] = onPage(SITE.calColors[k]); });
+
+        const calStarted = {};
+        const embeds = document.getElementById('calEmbeds');
+        function startCal(si, pi) {
+            const id = si + '-' + pi;
+            if (!calStarted[id]) {
+                calStarted[id] = true;
+                const d = document.createElement('div');
+                d.id = 'calEmbed-' + id; d.dataset.embed = id; d.className = 'w-full min-h-[560px] mix-blend-multiply';
+                embeds.appendChild(d);
+                const link = linkFor(si, pi), ns = link.split('/').pop();
+                Cal("init", ns, { origin: "https://app.cal.com" });
+                Cal.ns[ns]("on", { action: "bookingSuccessfulV2", callback: e => onBooked(e && e.detail && e.detail.data) });
+                Cal.ns[ns]("inline", {
+                    elementOrSelector: "#calEmbed-" + id,
+                    config: { layout: "month_view", theme: "light" },
+                    calLink: link
+                });
+                Cal.ns[ns]("ui", {
+                    theme: "light",
+                    hideEventTypeDetails: false,
+                    layout: "month_view",
+                    cssVarsPerTheme: { light: calVars }
+                });
+            }
+            embeds.querySelectorAll('[data-embed]').forEach(d => { d.hidden = d.dataset.embed !== id; });
+        }
+        function refreshBooking() {
+            document.querySelectorAll('#svcButtons button').forEach((b, i) => b.setAttribute('aria-pressed', String(i === svcIdx)));
+            document.querySelectorAll('#placeButtons button').forEach((b, i) => b.setAttribute('aria-pressed', String(i === placeIdx)));
+            setFallbackLink();
+            document.querySelectorAll('[data-email-place]').forEach(function (a) {
+                const svc = svcIdx >= 0 ? SERVICES[svcIdx].name + ' ' : '';
+                a.href = 'mailto:' + SITE.email + '?subject=' + encodeURIComponent(svc + 'booking in ' + a.getAttribute('data-email-place')) +
+                    '&body=' + encodeURIComponent('Hi Jessica, I would like to book ' + (svc ? svc.trim() + ' ' : 'a session ') + 'in ' + a.getAttribute('data-email-place') + '. Days and times that work for me: ');
+            });
+            const ready = svcIdx >= 0 && placeIdx >= 0;
+            if (ready) startCal(svcIdx, placeIdx);
+            else embeds.querySelectorAll('[data-embed]').forEach(d => { d.hidden = true; });
+        }
+        function pickerButtons(items, id, onPick) {
+            const box = document.getElementById(id);
+            box.innerHTML = items.map(x => '<button type="button" aria-pressed="false" class="min-h-[52px] rounded-full border-2 border-ink text-lg font-semibold leading-tight px-6 py-1.5 aria-pressed:bg-ink aria-pressed:text-paper">' + esc(x.name) + '</button>').join('');
+            box.addEventListener('click', ev => {
+                const b = ev.target.closest('button'); if (!b) return;
+                onPick([...box.children].indexOf(b));
+            });
+        }
+        /* ---- where she is, and on which days ---- */
+        (function () {
+            const place = p => '<p><span class="block text-sm font-semibold uppercase tracking-[0.2em]">' + esc(p.name) + '</span>' +
+                (p.days ? '<span class="block italic text-ink/80">' + esc(p.days) + '</span>' : '') + '</p>';
+            document.getElementById('whereRow').innerHTML = PLACES.concat(SITE.otherPlaces || []).map(place).join('<span class="hidden sm:block h-9 w-px bg-ink/25" aria-hidden="true"></span>');
+            document.getElementById('footWhere').innerHTML = PLACES.concat(SITE.otherPlaces || []).map(p => '<span class="block">' + esc(p.name + (p.days ? ': ' + p.days.replace(/ · /g, ', ') : '')) + '</span>').join('');
+        })();
+
+        pickerButtons(SERVICES, 'svcButtons', i => { svcIdx = i; refreshBooking(); });
+        if (PLACES.length > 1) pickerButtons(PLACES, 'placeButtons', i => { placeIdx = i; refreshBooking(); });
+        else { document.getElementById('placeLabel').hidden = true; document.getElementById('placeButtons').hidden = true; }
+        (function () {
+            const cls = 'min-h-[52px] inline-flex items-center rounded-full border-2 border-ink text-lg font-semibold leading-tight px-6 py-1.5';
+            document.getElementById('placeButtons').insertAdjacentHTML('beforeend', (SITE.otherPlaces || []).map(function (x) {
+                return x.url
+                    ? '<a href="' + esc(x.url) + '" target="_blank" rel="noopener" class="' + cls + '">' + esc(x.name) + '<span class="sr-only"> (opens its own booking page in a new tab)</span></a>'
+                    : '<a data-email-place="' + esc(x.name) + '" href="#" class="' + cls + '">' + esc(x.name) + '<span class="sr-only"> (sends her an email)</span></a>';
+            }).join(''));
+        })();
+        refreshBooking();
+
+        const bookToggle = document.getElementById('bookToggle');
+        const bookPanel = document.getElementById('book');
+        const calmMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ---- sharing: the site only, never anyone's booking details ---- */
+        const SHARE_URL = location.origin + location.pathname;
+        const SHARE_GENERIC = 'Sweet Somatics: massage, reiki, sound healing and yoga in Hayfork and Weaverville.';
+        const shareBtn = 'min-h-[48px] inline-flex items-center gap-2 rounded-full border-2 border-ink text-base font-semibold px-5';
+        function shareHtml(text) {
+            const u = encodeURIComponent(SHARE_URL), t = encodeURIComponent(text);
+            let h = '';
+            if (navigator.share) h += '<button type="button" data-share="native" data-text="' + esc(text) + '" class="' + shareBtn + '"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i>Share</button>';
+            h += '<a class="' + shareBtn + '" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=' + u + '"><i class="fa-brands fa-facebook" aria-hidden="true"></i>Facebook<span class="sr-only"> (opens in a new tab)</span></a>';
+            h += '<a class="' + shareBtn + '" target="_blank" rel="noopener" href="https://x.com/intent/post?text=' + t + '&url=' + u + '"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i>X<span class="sr-only"> (opens in a new tab)</span></a>';
+            h += '<button type="button" data-share="instagram" data-text="' + esc(text) + '" class="' + shareBtn + '"><i class="fa-brands fa-instagram" aria-hidden="true"></i>Instagram</button>';
+            h += '<button type="button" data-share="copy" class="' + shareBtn + '"><i class="fa-regular fa-copy" aria-hidden="true"></i>Copy link</button>';
+            return h;
+        }
+        function wireShare(boxId, noteId) {
+            document.getElementById(boxId).addEventListener('click', function (ev) {
+                const b = ev.target.closest('button[data-share]'); if (!b) return;
+                const note = document.getElementById(noteId);
+                if (b.dataset.share === 'native' || (b.dataset.share === 'instagram' && navigator.share)) {
+                    navigator.share({ title: 'Sweet Somatics', text: b.dataset.text, url: SHARE_URL }).catch(function () {});
+                } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(SHARE_URL).then(function () { note.textContent = b.dataset.share === 'instagram' ? 'Link copied. Open Instagram and paste it into a post, story or message.' : 'Link copied. Paste it anywhere you like.'; }, function () { note.textContent = SHARE_URL; });
+                } else { note.textContent = SHARE_URL; }
+            });
+        }
+        document.getElementById('footShare').innerHTML = shareHtml(SHARE_GENERIC);
+        wireShare('footShare', 'footShareNote');
+        wireShare('thanksShare', 'thanksNote');
+
+        const SOCIAL = [
+            { key: 'facebook',  label: 'Facebook',  icon: 'fa-brands fa-facebook' },
+            { key: 'x',         label: 'X',         icon: 'fa-brands fa-x-twitter' },
+            { key: 'instagram', label: 'Instagram', icon: 'fa-brands fa-instagram' }
+        ].filter(x => SITE.social && SITE.social[x.key]);
+        if (SOCIAL.length) {
+            document.getElementById('followRow').classList.remove('hidden');
+            document.getElementById('followLinks').innerHTML = SOCIAL.map(x =>
+                '<a class="' + shareBtn + '" target="_blank" rel="noopener" href="' + esc(SITE.social[x.key]) + '"><i class="' + x.icon + '" aria-hidden="true"></i>' + x.label + '<span class="sr-only"> (opens in a new tab)</span></a>').join('');
+        }
+
+        /* ---- after someone books: a thank-you with confirmation and sharing, in place of the calendar ---- */
+        const thanks = document.getElementById('thanks'), bookFlow = document.getElementById('bookFlow');
+        const fmtWhen = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+        function showThanks(o) {
+            o = o || {};
+            const place = PLACES[o.placeIdx] ? PLACES[o.placeIdx].name : '';
+            const svc = SERVICES[o.svcIdx] ? SERVICES[o.svcIdx].name : '';
+            const when = o.start && !isNaN(new Date(o.start)) ? fmtWhen.format(new Date(o.start)).replace(/, (\d)/, ' at $1') : '';
+            const lead = o.pending ? 'Your request is in' : 'You are booked';
+            document.getElementById('thanksLine').textContent =
+                lead + (svc ? ': ' + svc : '') + (place ? ' in ' + place : '') + (when ? ', ' + when : '') + '.';
+            const text = place ? 'I just booked with Sweet Somatics in ' + place + '.' : 'I just booked with Sweet Somatics.';
+            document.getElementById('thanksShare').innerHTML = shareHtml(text);
+            document.getElementById('thanksNote').textContent = '';
+            bookFlow.hidden = true; thanks.classList.remove('hidden');
+            setBooking(true, false);
+            thanks.scrollIntoView({ behavior: calmMotion ? 'auto' : 'smooth', block: 'start' });
+            thanks.focus({ preventScroll: true });
+        }
+        function onBooked(data) {
+            showThanks({ svcIdx: svcIdx, placeIdx: placeIdx, start: data && data.startTime, pending: Boolean(data && data.status && String(data.status).toLowerCase() !== 'accepted') });
+        }
+        document.getElementById('bookAnother').addEventListener('click', function () {
+            thanks.classList.add('hidden'); bookFlow.hidden = false;
+            svcIdx = -1; placeIdx = PLACES.length === 1 ? 0 : -1;
+            refreshBooking();
+            bookToggle.scrollIntoView({ behavior: calmMotion ? 'auto' : 'smooth', block: 'start' });
+        });
+
+        function setBooking(open, scroll, serviceKey) {
+            bookPanel.classList.toggle('is-open', open);
+            bookToggle.setAttribute('aria-expanded', String(open));
+            const si = SERVICES.findIndex(x => x.key === serviceKey);
+            if (open && si >= 0) { svcIdx = si; refreshBooking(); }
+            if (open && scroll) bookToggle.scrollIntoView({ behavior: calmMotion ? 'auto' : 'smooth', block: 'start' });
+        }
+
+        bookToggle.addEventListener('click', function () {
+            setBooking(bookToggle.getAttribute('aria-expanded') !== 'true', true);
+        });
+        document.querySelectorAll('a[href="#book"]').forEach(a => a.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            setBooking(true, true, a.dataset.service);
+        }));
+        if (location.hash === '#book') setBooking(true, false);
+        (function () {
+            const q = new URLSearchParams(location.search), t = q.get('thanks');
+            if (t === null) return;
+            const pi = PLACES.findIndex(p => p.slug === t.toLowerCase());
+            showThanks({ placeIdx: pi, start: q.get('startTime') });
+        })();
+
+        /* ---- Venmo: every "pay here" link points at her Venmo profile ---- */
+        document.querySelectorAll('[data-pay], [data-pay-link]').forEach(function (el) {
+            if (SITE.venmo) el.href = 'https://venmo.com/u/' + encodeURIComponent(SITE.venmo);
+            else el.hidden = true;
+        });
+
+        /* ---- retreats (from jessica-retreats.json) ---- */
+
+        function spotsText(e) {
+            if (e.soldOut) return 'Sold out';
+            if (!e.capacity) return '';
+            return e.left === 1 ? '1 spot left of ' + e.capacity : e.left + ' spots left of ' + e.capacity;
+        }
+        function photoGrid(e) {
+            const ph = e.photos || [];
+            return ph.length ? '<ul class="mt-3 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">' + ph.map((p, i) =>
+                '<li><button type="button" data-photo="' + esc(p.src) + '" class="block w-full rounded-lg overflow-hidden" aria-label="View photo ' + (i + 1) + ' of ' + ph.length + ' from ' + esc(e.title) + '">' +
+                '<img src="' + esc(p.thumb) + '" alt="Photo from ' + esc(e.title) + '" loading="lazy" class="w-full aspect-[4/3] object-cover"></button></li>').join('') + '</ul>' : '';
+        }
+        function retreatItem(e) {
+            const sold = e.soldOut, tm = timeText(e);
+            return '<li class="py-7 border-b border-ink/20">' +
+                '<h3 class="text-2xl font-semibold">' + esc(rangeText(e)) + '</h3>' +
+                '<p class="text-xl mt-1">' + esc(e.title) + '</p>' +
+                (e.description ? '<p class="mt-2 text-ink/80">' + esc(e.description) + '</p>' : '') +
+                (tm ? '<p class="mt-2 text-sm text-ink/80"><i class="fa-regular fa-clock mr-1" aria-hidden="true"></i>' + esc(tm) + '</p>' : '') +
+                (e.place ? '<p class="mt-2 text-sm text-ink/80"><i class="fa-solid fa-location-dot mr-1" aria-hidden="true"></i>' + esc(e.place) + '</p>' : '') +
+                '<p class="mt-3 inline-block rounded-full px-3 py-1 text-sm font-semibold ' + (sold ? 'bg-ink text-paper' : 'bg-sage/60') + '">' + esc(spotsText(e)) + '</p>' +
+                '<div class="mt-4">' + (sold
+                    ? '<a href="#news" class="min-h-[52px] inline-flex items-center rounded-full border-2 border-ink/50 text-lg font-semibold px-6 text-ink/80">Get notified when spots open</a>'
+                    : '<button type="button" data-reserve="' + esc(e.slug) + '" aria-expanded="false" class="min-h-[52px] inline-flex items-center rounded-full border-2 border-ink bg-ink text-paper text-lg font-semibold px-6 aria-expanded:bg-transparent aria-expanded:text-ink">Reserve a spot<span class="sr-only"> for ' + esc(e.title) + '</span></button>') +
+                '</div>' +
+                (sold ? '' : '<div data-reserve-panel="' + esc(e.slug) + '" hidden class="mt-5"><div data-reserve-embed class="rounded-2xl overflow-hidden mix-blend-multiply min-h-[560px]"></div>' +
+                    '<p class="mt-3 text-sm text-ink/80">Calendar not showing? <a href="' + esc(e.url) + '" target="_blank" rel="noopener" class="underline underline-offset-4 inline-flex items-center min-h-[44px]">Open it in a new tab</a>.</p></div>') +
+                photoGrid(e) +
+            '</li>';
+        }
+        function showRetreats(data) {
+            const now = new Date();
+            // Anything that has ended moves to the archive, even if the file has not refreshed yet.
+            const upcoming = (data.retreats || []).filter(e => new Date(e.end) > now).sort((a, b) => a.start.localeCompare(b.start));
+            const old = (data.archive || []).concat((data.retreats || []).filter(e => new Date(e.end) <= now))
+                .sort((a, b) => b.start.localeCompare(a.start));
+            const list = document.getElementById('eventList'), empty = document.getElementById('eventEmpty');
+            list.innerHTML = upcoming.map(retreatItem).join('');
+            list.classList.toggle('hidden', !upcoming.length);
+            empty.classList.toggle('hidden', upcoming.length > 0);
+            if (!upcoming.length) empty.textContent = 'Retreats are small, with room for 10 people, and dates are announced once a year. Join the email list below to hear first when new dates are posted.';
+            document.getElementById('pastList').innerHTML = old.map(e => {
+                const label = fmtMonthYear.format(new Date(e.start)) + ': ' + e.title, ph = e.photos || [];
+                return '<li class="py-4 border-b border-ink/15"><p class="text-lg font-semibold text-ink">' + esc(label) + '</p>' +
+                    (e.place ? '<p class="mt-1 text-sm"><i class="fa-solid fa-location-dot mr-1" aria-hidden="true"></i>' + esc(e.place) + '</p>' : '') +
+                    (e.description ? '<p class="mt-1">' + esc(e.description) + '</p>' : '') +
+                    photoGrid(e) + '</li>';
+            }).join('');
+            document.getElementById('pastWrap').classList.toggle('hidden', !old.length);
+        }
+        /* ---- free consultation: opens its Cal.com calendar right here ---- */
+        (function () {
+            const link = SITE.calUser + '/free-consultation', btn = document.getElementById('consultToggle'), panel = document.getElementById('consultPanel');
+            document.getElementById('consultLink').href = 'https://cal.com/' + link;
+            let started = false;
+            btn.addEventListener('click', function () {
+                const open = panel.hidden;
+                panel.hidden = !open;
+                btn.setAttribute('aria-expanded', String(open));
+                if (open && !started) {
+                    started = true;
+                    Cal("init", 'consult', { origin: "https://app.cal.com" });
+                    Cal.ns['consult']("inline", { elementOrSelector: '#consultEmbed', config: { layout: "month_view", theme: "light" }, calLink: link });
+                    Cal.ns['consult']("ui", { theme: "light", hideEventTypeDetails: false, layout: "month_view", cssVarsPerTheme: { light: calVars } });
+                }
+            });
+        })();
+
+        /* ---- "Reserve a spot" opens the Cal.com booking calendar right here ---- */
+        document.getElementById('eventList').addEventListener('click', function (ev) {
+            const btn = ev.target.closest('[data-reserve]');
+            if (!btn) return;
+            const slug = btn.getAttribute('data-reserve');
+            const panel = btn.closest('li').querySelector('[data-reserve-panel]');
+            const open = panel.hidden;
+            panel.hidden = !open;
+            btn.setAttribute('aria-expanded', String(open));
+            const host = panel.querySelector('[data-reserve-embed]');
+            if (open && !host.dataset.started) {
+                host.dataset.started = '1';
+                const ns = 'retreat-' + slug;
+                Cal("init", ns, { origin: "https://app.cal.com" });
+                Cal.ns[ns]("inline", { elementOrSelector: host, config: { layout: "month_view", theme: "light" }, calLink: slug });
+                Cal.ns[ns]("ui", { theme: "light", hideEventTypeDetails: false, layout: "month_view", cssVarsPerTheme: { light: calVars } });
+            }
+        });
+
+        (function () {
+            const box = document.getElementById('lightbox'), img = document.getElementById('lightboxImg');
+            document.getElementById('retreats').addEventListener('click', function (ev) {
+                const b = ev.target.closest('[data-photo]');
+                if (!b || !box.showModal) return;
+                img.src = b.getAttribute('data-photo'); img.alt = b.querySelector('img').alt;
+                box.showModal();
+            });
+            document.getElementById('lightboxClose').addEventListener('click', function () { box.close(); });
+            box.addEventListener('click', function (ev) { if (ev.target === box) box.close(); });
+        })();
+        function retreatsUnavailable() {
+            const empty = document.getElementById('eventEmpty');
+            empty.classList.remove('hidden');
+            empty.textContent = 'Retreat dates are not loading right now. Please check back soon.';
+        }
+        fetch(RETREATS_FILE, { cache: 'no-cache' })
+            .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+            .then(showRetreats)
+            .catch(err => { console.error('Could not load retreats:', err); retreatsUnavailable(); });
+
+        /* ---- newsletter ---- */
+        const newsForm = document.getElementById('newsForm');
+        if (SITE.newsletterAction) newsForm.action = SITE.newsletterAction;
+        newsForm.addEventListener('submit', function (ev) {
+            if (SITE.newsletterAction) return;   // real form: let the browser send it
+            ev.preventDefault();
+            document.getElementById('newsNotice').textContent = 'Mockup only. Nothing was sent. On the live site, this adds you to her email list.';
+        });
+    </script>
+</body>
+</html>
