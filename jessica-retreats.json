@@ -1,20 +1,5 @@
 {
-  "updated": "2026-11-04T20:10:52.974Z",
-  "retreats": [
-    {
-      "key": "2026-11-04-syd-co8k3e",
-      "title": "Syd",
-      "description": "",
-      "slug": "syd-co8k3e",
-      "url": "https://cal.com/syd-co8k3e",
-      "place": "Willow Creek",
-      "start": "2026-11-04T21:00:00.000Z",
-      "end": "2026-11-04T22:00:00.000Z",
-      "capacity": 10,
-      "left": 10,
-      "soldOut": false,
-      "photos": []
-    }
-  ],
+  "updated": "2026-11-04T20:39:39.953Z",
+  "retreats": [],
   "archive": []
 }
